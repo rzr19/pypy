@@ -18,10 +18,10 @@ mountListOut=out2.split()
 
 diff=list(set(mountListOut)-set(uuidFstabCmd))
 if(diff!=''):
-        for i in diff:
-                print("The /etc/fstab entry" + diff[i] + "is not mounted")
-                syst.exit(2)
+    for i in diff:
+        print("The /etc/fstab entry" + diff[i] + "is not mounted")
+        syst.exit(2)
 else:
-        print("All the /etc/fstab entries are mounted")
-        sys.exit(0)
+    print("All the /etc/fstab entries are mounted")
+    sys.exit(0)
 
