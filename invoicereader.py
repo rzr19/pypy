@@ -32,9 +32,11 @@ def hettich(files):
         ('Customer: ','LTTextLineHorizontal:in_bbox("493.2, 547.144, 524.336, 556.392")'),
         ('Invoice: ','LTTextLineHorizontal:in_bbox("493.2, 536.844, 537.68, 546.364")'),
     ])
-    blah2 = pdf.pq('LTTextLineHorizontal:contains("Total amount ")').nextAll().text()
-    blah3 = blah2.split('\n', 1)[0].strip()
-    blah.update({"Total Amount: ":blah3})
+    blah2 = pdf.pq('LTTextLineHorizontal:contains("Total amount ")').next() #or with nextAll and strip everything after.
+    blah3 = blah2.next().text()
+    blah4 = blah3.split("\n")[0].strip()
+#    blah3 = blah2.split('\n', 1)[0].strip()
+    blah.update({"Total Amount: ":blah4})
     print(blah)
 
 if __name__ == "__main__":
