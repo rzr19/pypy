@@ -26,6 +26,13 @@ def startcp():
         sftpSAP.chdir('/tmp')
         sftpSAP.put(invoiceFile)
         sftpSAP.chmod('/tmp/MIRO.txt', 666)
+        
+def hettichMatGet(regexText):
+    materialMatches = re.findall('((1_[a-zA-Z0-9-_]+.) (CE|TW) \d+(?:\.?\d+)? (SET|PCE) \d{1,3}(.?\d{3})*(\,\d{1,2})? \d{1,6} \d{1,3}(.?\d{3})*(\,\d{1,2})?)', regexText)
+    materialNumbers = [i[0] for i in materialMatches]
+    materialStr = str(materialNumbers).split(', ')
+    materialStringed = ';'.join(materialStr).strip('[]').replace("'", "")
+    return materialStringed
 
 def hettichGet(filename):
     with open(filename, 'r') as invoiceTxt:
@@ -48,10 +55,7 @@ def hettichGet(filename):
         currencyStr = currencyMatch.group(0)
         currencySymbol = currencyStr[-3:]
         if len(poNoMatches) == 1:
-            materialMatches = re.findall('((1_[a-zA-Z0-9-_]+.) (CE|TW) \d+(?:\.?\d+)? (SET|PCE) \d{1,3}(.?\d{3})*(\,\d{1,2})? \d{1,6} \d{1,3}(.?\d{3})*(\,\d{1,2})?)', fileContent)
-            materialNumbers = [i[0] for i in materialMatches]
-            materialStr = str(materialNumbers).split(', ')
-            materialStringed = ';'.join(materialStr).strip('[]')
+            materialStringed = hettichMatGet(fileContent)
             poStringed = poNo + ";" + materialStringed.replace("'", "")
         elif len(poNoMatches) > 1:
             i = 0
@@ -60,20 +64,14 @@ def hettichGet(filename):
                 if i + 1 == len(poNoMatches):
                     poMatList = re.findall('{}(.*)'.format(poNoMatches[i]), fileContent)
                     poMatText = str(poMatList)
-                    materialMatches = re.findall('((1_[a-zA-Z0-9-_]+.) (CE|TW) \d+(?:\.?\d+)? (SET|PCE) \d{1,3}(.?\d{3})*(\,\d{1,2})? \d{1,6} \d{1,3}(.?\d{3})*(\,\d{1,2})?)', poMatText)
-                    materialNumbers = [i[0] for i in materialMatches]
-                    materialStr = str(materialNumbers).split(', ')
-                    materialStringed = ';'.join(materialStr).strip('[]').replace("'", "")
+                    materialStringed = hettichMatGet(poMatText)
                     thisPO = po.strip("Your Order: ").strip("Votre commande : ") + ";" + materialStringed
                     poComplete.append(thisPO)
                 else:
                     poMatList = re.findall('{}(.*){}'.format(poNoMatches[i], poNoMatches[i+1]), fileContent)
                     poMatText = str(poMatList)
-                    materialMatches = re.findall('((1_[a-zA-Z0-9-_]+.) (CE|TW) \d+(?:\.?\d+)? (SET|PCE) \d{1,3}(.?\d{3})*(\,\d{1,2})? \d{1,6} \d{1,3}(.?\d{3})*(\,\d{1,2})?)', poMatText)
-                    materialNumbers = [i[0] for i in materialMatches]
-                    materialStr = str(materialNumbers).split(', ')
-                    materialStringed = ';'.join(materialStr).strip('[]').replace("'", "")
-                    thisPO = poNo + ";" + materialStringed
+                    materialStringed = hettichMatGet(poMatText)
+                    thisPO = po.strip("Your Order: ").strip("Votre commande : ") + ";" + materialStringed
                     poComplete.append(thisPO)
                     i += 1
             poStringed = ';'.join(poComplete).strip('[]').replace("'", "")
