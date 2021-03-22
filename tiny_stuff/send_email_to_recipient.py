@@ -13,7 +13,7 @@ def sendemail( message, subject, to_addr = None ):
     if (to_addr is None) or (not isinstance( to_addr, (str, unicode) ) ):
         to_addr = DEFAULT_EMAIL_ADDRESS
 
-    sender = 'health_check@gitlab.app.betfair'
+    sender = 'info@server.com'
     receivers = [ to_addr ]
     message = ("From: %s\n" % sender) + \
               ("To: %s\n" % to_addr) + \
