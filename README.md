@@ -1,2 +1,2 @@
 # pypy
-Collection of misc python scripts
+collection of general purpose python scripts.
